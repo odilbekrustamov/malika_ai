@@ -5,6 +5,10 @@ import androidx.room.Insert
 import androidx.room.Query
 import com.iq_academy.malika_ai.model.room.Chat
 
+/**
+ * Rustamov Odilbek, Android developer
+ * 28/03/2023  +998-91-775-17-79
+ */
 @Dao
 interface ChatDao {
 

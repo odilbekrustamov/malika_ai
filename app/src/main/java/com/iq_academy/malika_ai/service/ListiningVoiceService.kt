@@ -24,9 +24,16 @@ import com.iq_academy.malika_ai.utils.Extensions.checkApp
 import com.iq_academy.malika_ai.utils.Extensions.decodeString
 import com.iq_academy.malika_ai.utils.Extensions.decodeString2
 import com.iq_academy.malika_ai.utils.Extensions.getCurrentTime
+import com.iq_academy.malika_ai.utils.Extensions.getSentanse
 import com.iq_academy.malika_ai.utils.Extensions.similarity
 import com.iq_academy.malika_ai.utils.Extensions.testAnswer
+import com.iq_academy.malika_ai.utils.Extensions.testAnswerEng
+import com.iq_academy.malika_ai.utils.Extensions.testAnswerRu
 import com.iq_academy.malika_ai.utils.Extensions.testQuestion
+import com.iq_academy.malika_ai.utils.Extensions.testQuestionEng
+import com.iq_academy.malika_ai.utils.Extensions.testQuestionRu
+import com.iq_academy.malika_ai.utils.KeyValue.LANGUAGE
+import com.iq_academy.malika_ai.utils.SharedPref
 import com.microsoft.cognitiveservices.speech.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -38,26 +45,32 @@ import java.util.concurrent.ExecutionException
 import java.util.concurrent.Future
 import javax.inject.Inject
 
+/**
+ * Rustamov Odilbek, Android developer
+ * 28/03/2023  +998-91-775-17-79
+ */
 
 @AndroidEntryPoint
 class ListiningVoiceService : Service() {
     private val CHANNEL_ID = "ListiningVoiceService"
     private val NOTIFICATION_ID = 123
-
+    private var language = "uz"
     var isMAzure = false
     private val googleTranslate = "AIzaSyANxBBWpXuCV1s7eLnB6Ox3MZXUTscNH8M"
 
     // Replace below with your own subscription key
-    private val azureSubscriptionKey = "0d81028223814e53ba6ecfea0a8ad008"
+    private val azureSubscriptionKey = "23902f50272446568b8acefd04a76353"
 
     // Replace below with your own service region (e.g., "westus").
     private val azureServiceRegion = "eastus"
     var soundListener: SoundListener? = null
-
     private lateinit var chat: Chat
 
     @Inject
     lateinit var mainRepository: MainRepository
+
+    @Inject
+    lateinit var sharedPref: SharedPref
 
     override fun onCreate() {
         super.onCreate()
@@ -113,6 +126,7 @@ class ListiningVoiceService : Service() {
             if (isInternet() && !isMAzure) {
                 isMAzure = true
 
+                language = sharedPref.getLanguage(LANGUAGE)
                 voiceAnalysis()
             }
         }
@@ -124,65 +138,98 @@ class ListiningVoiceService : Service() {
         CoroutineScope(Dispatchers.IO).launch {
 
             var result = startMicrosoftAzure()
-            Log.d("DscsDDdfssf", "initViews:RDEYGTHREYHR ${result}")
 
             chat.userQuestion = result
             chat.userTime = getCurrentTime()
 
-            testQuestion().forEach { question ->
-                if (similarity(question, result) > 0.4) {
-                    textToSpeech(testAnswer())
-                    isMAzure = false
-                    return@launch
-                }
-            }
+            result = decodeString(result)
+            result = decodeString2(result)
 
-            getApps().forEach { appinfo ->
-
-                if (checkApp(result.uppercase(), appinfo.appname!!.uppercase())) {
-                    Log.d("DscsDDdfssf", "initViews:RDEYGTHREYHR ${appinfo.appname}")
-                    Log.d("DscsDDdfssf", "initViews:RDEYGTHREYHR ${appinfo.pname}")
-
-                    val intent = packageManager.getLaunchIntentForPackage(appinfo.pname!!)
-                    intent!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    startActivity(intent)
-                    isMAzure = false
-                    return@launch
-                }
-            }
-
-            if (result.length < 15 || !checkApp(result.uppercase(), "Malika".uppercase())) {
-                Log.d("DscsDDdfssf", "initViews:RDEYGTHdxscscREYHR ${result}")
+            if (result.length < 15 ||
+                !checkApp(result.uppercase(), "Malika".uppercase()) && !checkApp(
+                    result.uppercase(),
+                    "Malaka".uppercase()
+                ) &&
+                !checkApp(result.uppercase(), "Малика".uppercase()) && !checkApp(
+                    result.uppercase(),
+                    "Малики".uppercase()
+                ) &&
+                !checkApp(
+                    result.uppercase(),
+                    "Malikia".uppercase()
+                ) && !checkApp(result.uppercase(), "Маленькие".uppercase())
+            ) {
                 isMAzure = false
                 return@launch
             } else {
                 result = result.substring(7, result.length)
             }
 
-            result =
-                decodeString(result) + " Bu savolga eng ko'pi bilan 3 ta gap bilan javob qaytar"
+            if (language == "uz") {
+                testQuestion().forEach { question ->
+                    if (similarity(question, result) > 0.4) {
+                        textToSpeech(testAnswer())
+                        isMAzure = false
+                        return@launch
+                    }
+                }
 
-            val translatedTextUzToEng = translateText(result!!, "en")
-            // Update UI with translated text
-            Log.d("DscsDDdfssf", "initViews: ${translatedTextUzToEng}")
+                getApps().forEach { appinfo ->
+                    if (checkApp(result.uppercase(), appinfo.appname!!.uppercase())) {
 
-            var responseGatCHPT = chatGPTApi(translatedTextUzToEng)
+                        val intent =
+                            applicationContext.packageManager.getLaunchIntentForPackage(appinfo.pname!!)
+                        intent!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        startActivity(intent)
 
-            var translatedTextEngToUz = translateText(responseGatCHPT, "uz")
+                        isMAzure = false
+                        return@launch
+                    }
+                }
 
-            translatedTextEngToUz = decodeString2(translatedTextEngToUz)
-            translatedTextEngToUz = decodeString(translatedTextEngToUz)
+                result = translateText(result, "en")
+            }
 
-            Log.d("DscsDDdfssf", "initViews: translatedTextEngToUz ${translatedTextEngToUz}")
+            if (language == "ru") {
+                testQuestionRu().forEach { question ->
+                    if (similarity(question, result) > 0.4) {
+                        textToSpeech(testAnswerRu())
+                        isMAzure = false
+                        return@launch
+                    }
+                }
+            }
 
-            chat.aiAnswer = translatedTextEngToUz
+            if (language == "en") {
+                testQuestionEng().forEach { question ->
+                    if (similarity(question, result) > 0.4) {
+                        textToSpeech(testAnswerEng())
+                        isMAzure = false
+                        return@launch
+                    }
+                }
+            }
+
+
+            var responseGatCHPT = chatGPTApi(result)
+
+            if (language == "uz") {
+                responseGatCHPT = translateText(responseGatCHPT, language)
+            }
+
+            responseGatCHPT = decodeString2(responseGatCHPT)
+            responseGatCHPT = decodeString(responseGatCHPT)
+
+
+            chat.aiAnswer = responseGatCHPT
             chat.aiTime = getCurrentTime()
             chat.chatId = System.currentTimeMillis().toInt()
 
+
+            textToSpeech(getSentanse(responseGatCHPT))
+
             mainRepository.insertChatToDB(chat)
             chat = Chat()
-
-            textToSpeech(translatedTextEngToUz)
         }
     }
 
@@ -192,13 +239,20 @@ class ListiningVoiceService : Service() {
             azureServiceRegion
         )
 
-        config.setSpeechRecognitionLanguage("uz-UZ")
+        if (language == "uz") {
+            config.setSpeechRecognitionLanguage("uz-UZ")
+        } else if (language == "en") {
+            config.setSpeechRecognitionLanguage("en-US")
+        } else if (language == "ru") {
+            config.setSpeechRecognitionLanguage("ru-RU")
+        }
+
         config.setProfanity(ProfanityOption.Raw)
 
         val reco = SpeechRecognizer(config)
         val task: Future<SpeechRecognitionResult> = reco.recognizeOnceAsync()
 
-        var result: SpeechRecognitionResult? = null
+        val result: SpeechRecognitionResult?
         result = try {
             task.get()
         } catch (e: ExecutionException) {
@@ -235,8 +289,20 @@ class ListiningVoiceService : Service() {
     suspend fun chatGPTApi(translatedTextUzToEng: String): String {
         return withContext(Dispatchers.IO) {
             try {
+                val messageList: ArrayList<Message> = arrayListOf()
+
+                val chatList = mainRepository.getAllchats()
+
+                val size = chatList.size
+                for (i in 1..size) {
+                    val messUser = Message(role = "user", content = chatList[size - i].userQuestion)
+                    val messAssistan =
+                        Message(role = "assistant", content = chatList[size - i].aiAnswer)
+                    messageList.add(messUser)
+                    messageList.add(messAssistan)
+                }
                 val mess = Message(role = "user", content = translatedTextUzToEng)
-                var messageList: ArrayList<Message> = arrayListOf(mess)
+                messageList.add(mess)
 
                 messageList.add(mess)
 
@@ -258,9 +324,15 @@ class ListiningVoiceService : Service() {
         val speechConfig = SpeechConfig.fromSubscription(
             azureSubscriptionKey,
             azureServiceRegion
-        )
+        )!!
 
-        speechConfig.setProperty(PropertyId.SpeechServiceConnection_SynthLanguage, "uz-UZ")
+        if (language == "uz") {
+            speechConfig.setProperty(PropertyId.SpeechServiceConnection_SynthLanguage, "uz-UZ")
+        } else if (language == "en") {
+            speechConfig.setProperty(PropertyId.SpeechServiceConnection_SynthLanguage, "en-US")
+        } else if (language == "ru") {
+            speechConfig.setProperty(PropertyId.SpeechServiceConnection_SynthLanguage, "ru-RU")
+        }
 
         assert(speechConfig != null)
 
@@ -269,13 +341,16 @@ class ListiningVoiceService : Service() {
 
         val result = synthesizer.SpeakText(translatedTextEngToUz)!!
 
+
         if (result.reason == ResultReason.SynthesizingAudioCompleted) {
 
         } else if (result.reason == ResultReason.Canceled) {
+
             SpeechSynthesisCancellationDetails.fromResult(result).toString()
 
         }
         result.close()
+
         isMAzure = false
     }
 

@@ -9,14 +9,18 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.iq_academy.malika_ai.R
 import com.iq_academy.malika_ai.databinding.FragmentLoginBinding
-import com.iq_academy.malika_ai.model.SendSMSRequest
-import com.iq_academy.malika_ai.model.VerifySMSRequest
+import com.iq_academy.malika_ai.model.verify.SendSMSRequest
+import com.iq_academy.malika_ai.model.verify.VerifySMSRequest
 import com.iq_academy.malika_ai.utils.Extensions.snackBar
 import com.iq_academy.malika_ai.utils.KeyValue.LOG_IN
 import com.iq_academy.malika_ai.utils.SharedPref
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+/**
+ * Rustamov Odilbek, Android developer
+ * 28/03/2023  +998-91-775-17-79
+ */
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
@@ -41,24 +45,24 @@ class LoginFragment : Fragment() {
         return root
     }
 
-
     private fun initViews() {
-
-
         binding.btnLogin.setOnClickListener {
-            if (!isSendSMS) {
 
-                isSendSMS = true
-                binding.etPhoneNumber.isEnabled = false
-                binding.etSMS.visibility = View.VISIBLE
-                binding.btnLogin.text = "KIRISH"
+            findNavController().popBackStack()
+            findNavController().navigate(R.id.homeFragment)
+            sharedPref.saveLogIn(LOG_IN, true)
+
+            if (!isSendSMS) {
 
                 var etNumber = binding.etPhoneNumber.text.toString().trim()
                 if (etNumber.startsWith("+998") && etNumber.length == 13) {
                     var sendSMSRequest = SendSMSRequest(etNumber)
                     viewModel.sendSMS(sendSMSRequest) {
                         it.onSuccess {
-
+                            isSendSMS = true
+                            binding.etPhoneNumber.isEnabled = false
+                            binding.etSMS.visibility = View.VISIBLE
+                            binding.btnLogin.text = "KIRISH"
 
                         }
                         it.onFailure {
@@ -70,18 +74,21 @@ class LoginFragment : Fragment() {
                     snackBar("Iltimos telefon nomerni to'g'ri kiriting!!  +998917751779 ko'rinishida.")
                 }
             } else {
-                val etNumber = binding.etPhoneNumber.text.toString()
-                val etCode = binding.etSMS.text.toString()
-
-
-                findNavController().popBackStack()
-                findNavController().navigate(R.id.homeFragment)
-                sharedPref.saveLogIn(LOG_IN, true)
+                val etNumber = binding.etPhoneNumber.text.toString().trim()
+                val etCode = binding.etSMS.text.toString().trim()
 
                 if (etNumber.startsWith("+998") && etNumber.length == 13 && etCode.length == 6) {
-                    var verifySMSRequest = VerifySMSRequest("", etNumber)
+                    var verifySMSRequest = VerifySMSRequest(etCode, etNumber)
                     viewModel.verifySMS(verifySMSRequest) {
                         it.onSuccess {
+
+                            if(it.token.isNotEmpty()){
+//                                findNavController().popBackStack()
+//                                findNavController().navigate(R.id.homeFragment)
+//                                sharedPref.saveLogIn(LOG_IN, true)
+                            }else{
+                                snackBar("Iltimos SMS parolni to'g'ri kiriting!!  771779 ko'rinishida.")
+                            }
 
                         }
                         it.onFailure {

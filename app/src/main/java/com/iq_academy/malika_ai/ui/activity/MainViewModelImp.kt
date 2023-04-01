@@ -7,6 +7,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * Rustamov Odilbek, Android developer
+ * 28/03/2023  +998-91-775-17-79
+ */
 @HiltViewModel
 class MainViewModelImp @Inject constructor(private val mainRepository: MainRepository) :
     ViewModel(),

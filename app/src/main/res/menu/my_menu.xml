@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_uz"
+        android:icon="@drawable/ic_uz_flag"
+        android:title="O'zbek"/>
+    <item
+        android:id="@+id/action_eng"
+        android:icon="@drawable/ic_eng_flag"
+        android:title="English"/>
+    <item
+        android:id="@+id/action_ru"
+        android:icon="@drawable/ic_ru_flag"
+        android:title="Русский"/>
+</menu>

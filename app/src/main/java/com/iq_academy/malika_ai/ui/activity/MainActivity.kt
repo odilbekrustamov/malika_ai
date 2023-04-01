@@ -6,6 +6,7 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -19,11 +20,17 @@ import com.iq_academy.malika_ai.R
 import com.iq_academy.malika_ai.databinding.ActivityMainBinding
 import com.iq_academy.malika_ai.reciver.NoticeUsbConnectionReceiver
 import com.iq_academy.malika_ai.service.ListiningVoiceService
+import com.iq_academy.malika_ai.utils.Extensions.isEmulator
+import com.iq_academy.malika_ai.utils.KeyValue.LANGUAGE
 import com.iq_academy.malika_ai.utils.KeyValue.LOG_IN
 import com.iq_academy.malika_ai.utils.SharedPref
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+/**
+ * Rustamov Odilbek, Android developer
+ * 28/03/2023  +998-91-775-17-79
+ */
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -55,19 +62,15 @@ class MainActivity : AppCompatActivity() {
 
         receiver = NoticeUsbConnectionReceiver()
 
-//        if (isEmulator()){
-//            finish()
-//        }
-
+        if (isEmulator()){
+            finish()
+        }
 
         checkPermissions()
-
     }
 
     private fun initViews() {
-
         controlClicks()
-
     }
 
     private fun checkPermissions() {
@@ -115,6 +118,7 @@ class MainActivity : AppCompatActivity() {
                 closeDrawerLayout()
             }
         }
+
     }
 
     fun startService() {

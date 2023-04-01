@@ -9,6 +9,10 @@ import com.google.android.material.snackbar.Snackbar
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * Rustamov Odilbek, Android developer
+ * 28/03/2023  +998-91-775-17-79
+ */
 object Extensions {
     fun showDialog(context: Context?) {
         val dialog = AlertDialog.Builder(context)
@@ -91,7 +95,7 @@ object Extensions {
         return false
     }
 
-    fun testQuestion(): ArrayList<String>{
+    fun testQuestion(): ArrayList<String> {
         val questions = ArrayList<String>()
         questions.add("Sen kimsan?");
         questions.add("Kimsan sen?");
@@ -118,10 +122,71 @@ object Extensions {
         return questions
     }
 
-    fun testAnswer(): String{
-        return "Men AYKYU academy tomonidan yaratilgan Malika ismli sun'iy intellektman. Vazifam sizga yordamchi bo'lish, qulaylik yaratish va og'iringizni yengil qilishdan iborat.\n" +
+    fun testQuestionRu(): ArrayList<String> {
+        val questions = ArrayList<String>()
+        questions.add("Кто ты?");
+        questions.add("Ты кто?");
+        questions.add("Ты что?");
+        questions.add("Ты кто?");
+        questions.add("из чего ты сделан??");
+        questions.add("из чего ты сделан??");
+        questions.add("кем вы были созданы?");
+        questions.add("из чего ты сделан??");
+        questions.add("когда вы образовались??");
+        questions.add("кто сделал тебя?");
+        questions.add("кто сделал?");
+        questions.add("сделал тебя?");
+        questions.add("кто твой создатель?");
+        questions.add("кто твой изобретатель?");
+        questions.add("кто изобрел тебя?");
+        questions.add("кто тебя запрограммировал?");
+        questions.add("Кто научил тебя программировать?");
+        questions.add("Кто научил тебя программировать?");
+        questions.add("кто научил тебя читать?");
+        questions.add("кто научил тебя читать?");
+        return questions
+    }
+
+    fun testQuestionEng(): ArrayList<String> {
+        val questions = ArrayList<String>()
+        questions.add("Who are you?");
+        questions.add("What are you?");
+        questions.add("Who are you?");
+        questions.add("What are you made of?");
+        questions.add("What are you made of?");
+        questions.add("Who created you?");
+        questions.add("When were you founded?");
+        questions.add("Who made you?");
+        questions.add("Who created?");
+        questions.add("Who created you?");
+        questions.add("Who created you?");
+        questions.add("Who is your creator?");
+        questions.add("Who is your creator?");
+        questions.add("Who is your invention?");
+        questions.add("Who programmed you?");
+        questions.add("Who taught you programming?");
+        questions.add("Who taught you to read?");
+        questions.add("Who taught you to write?");
+        questions.add("Who taught you all these things?");
+
+        return questions
+    }
+
+    fun testAnswer(): String {
+        return "Men IQ academy tomonidan yaratilgan Malika ismli sun'iy intellektman. Vazifam sizga yordamchi bo'lish, qulaylik yaratish va og'iringizni yengil qilishdan iborat.\n" +
                 "Menga o'z savollaringizni berishingiz mumkin. Turli fan va sohalar doirasida o'z bilimlarimdan foydalangan holda javob beraman."
     }
+
+    fun testAnswerRu(): String {
+        return "Я искусственный интеллект по имени Малика созданный \"IQ Academy\".  Моя работа состоит в том, чтобы помочь вам, сделать вас удобными и облегчить ваше бремя.\n" +
+                " Вы можете задать мне свои вопросы.  Я отвечу, используя свои знания в различных дисциплинах и областях."
+    }
+
+    fun testAnswerEng(): String {
+        return "I am an artificial intelligence named \"Malika\" created by \"IQ Academy\". My function is to help you, create comfort and lighten your burden.\n" +
+                "You can ask me your questions. I will answer using my knowledge in various fields."
+    }
+
 
     fun similarity(s1: String, s2: String): Double {
         var longer = s1
@@ -160,5 +225,15 @@ object Extensions {
             if (i > 0) costs[s2.length] = lastValue
         }
         return costs[s2.length]
+    }
+
+    fun getSentanse(input: String): String {
+        val sentences = input.split(". ")
+
+        val firstFourSentences = sentences.take(4)
+
+        val output = firstFourSentences.joinToString(". ")
+        Log.d("DscsDDdfssf", "initViews: output ${output}")
+        return output
     }
 }

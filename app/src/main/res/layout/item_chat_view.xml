@@ -22,6 +22,7 @@
             android:background="@drawable/message_background_end"
             android:fontFamily="@font/interregular"
             android:padding="8dp"
+            android:textIsSelectable="true"
             android:text="Hello, how are you?"
             android:textColor="@android:color/white"
             android:textSize="16sp" />
@@ -57,6 +58,7 @@
             android:background="@drawable/message_background_start"
             android:fontFamily="@font/interregular"
             android:padding="8dp"
+            android:textIsSelectable="true"
             android:text="Hello, how are you?"
             android:textColor="@android:color/white"
             android:textSize="16sp" />

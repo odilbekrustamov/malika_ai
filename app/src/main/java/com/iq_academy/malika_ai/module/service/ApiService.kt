@@ -1,14 +1,19 @@
 package com.iq_academy.malika_ai.module.service
 
-import com.iq_academy.malika_ai.model.SendSMSRequest
-import com.iq_academy.malika_ai.model.VerifySMSRequest
+import com.iq_academy.malika_ai.model.verify.SendSMSRequest
+import com.iq_academy.malika_ai.model.verify.SendSMSResponse
+import com.iq_academy.malika_ai.model.verify.VerifySMSResponse
+import com.iq_academy.malika_ai.model.verify.VerifySMSRequest
 import com.iq_academy.malika_ai.model.openia.ChatGPTRequest
 import com.iq_academy.malika_ai.model.openia.ChatGPTResponse
 import retrofit2.http.Body
 import retrofit2.http.Headers
 import retrofit2.http.POST
 import javax.inject.Named
-
+/**
+ * Rustamov Odilbek, Android developer
+ * 28/03/2023  +998-91-775-17-79
+ */
 interface ApiService1 {
 
     @Headers(
@@ -23,13 +28,14 @@ interface ApiService1 {
 
 interface ApiService2 {
 
+    @Headers(
+        "Content-Type: application/json"
+    )
     @POST("phone")
-    @Named("Retrofit2")
-    suspend fun sendSMS(sendSMSRequest: SendSMSRequest)
+    suspend fun sendSMS(@Body sendSMSRequest: SendSMSRequest): SendSMSResponse
 
-    @POST("phone")
-    @Named("Retrofit2")
-    suspend fun verifySMS(verifySMSRequest: VerifySMSRequest)
+    @POST("verify")
+    suspend fun verifySMS(@Body verifySMSRequest: VerifySMSRequest): VerifySMSResponse
 
 
 }

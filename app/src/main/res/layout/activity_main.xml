@@ -54,6 +54,7 @@
                 android:gravity="bottom"
                 android:orientation="vertical">
 
+
                 <LinearLayout
                     android:id="@+id/llClearHistory"
                     android:layout_width="match_parent"
@@ -84,7 +85,7 @@
                 android:layout_margin="10dp"
                 android:fontFamily="@font/interregular"
                 android:gravity="center"
-                android:text="malikaAI     v-1.0.0"
+                android:text="malikaAI     v-1.0.1"
                 android:textColor="@color/white"
                 android:textSize="12sp" />
         </LinearLayout>

@@ -6,6 +6,13 @@ import android.media.AudioRecord
 import android.media.MediaRecorder
 import kotlin.math.abs
 
+/**
+ * Rustamov Odilbek, Android developer
+ * 28/03/2023  +998-91-775-17-79
+ */
+
+//Lestining voice
+
 class SoundListener(private val callback: (Boolean) -> Unit) {
 
     private val SAMPLE_RATE = 44100
